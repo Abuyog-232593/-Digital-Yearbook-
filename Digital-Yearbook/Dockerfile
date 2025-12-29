@@ -4,14 +4,17 @@ FROM eclipse-temurin:17-jdk
 # Set working directory
 WORKDIR /app
 
-# Copy Maven wrapper and project files
-COPY . .
+# Copy only necessary files
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
+COPY src ./src
 
 # Build the Spring Boot app
 RUN ./mvnw clean package -DskipTests
 
-# Expose port used by Spring Boot
+# Expose port your app will run on
 EXPOSE 8082
 
-# Run the app
-CMD ["java", "-jar", "target/*.jar"]
+# Automatically find the JAR in target/ and run it
+CMD java -jar $(ls target/*.jar | head -n 1)
